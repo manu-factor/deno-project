@@ -12,9 +12,15 @@ class HolesController extends Controller
      */
     public function __construct() {}
 
+    function welcome () { return view('welcome'); }
+
     function home () {
         return view('home');
     }
+	
+	function getBoreHoles () {
+		return Hole::all();
+	}
 
     function insert (Request $request) {
         Hole::create([
