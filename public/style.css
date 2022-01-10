@@ -24,3 +24,10 @@ a#popup-closer {
 a.navbar-brand {
     color: red;
 }
+
+ul#users-list {
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+    font-size: 0.77em;
+}

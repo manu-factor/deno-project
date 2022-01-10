@@ -22,6 +22,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ol_style__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ol/style */ "./node_modules/ol/style/Icon.js");
 /* harmony import */ var ol_source_Vector__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js");
 /* harmony import */ var ol_proj__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -32,21 +33,39 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // fetch
+
+ // create markers arr
+
+var points = [];
+var boreholes = [];
+var owners = []; // fetch
 
 fetch('/getboreholes').then(function (res) {
   return res.json();
 }).then(function (data) {
   // fetch boreholes
-  var boreholes = data; // create markers arr
-
-  var points = []; // populate markers arr
+  boreholes = data; // console.log("All Boreholes: ", boreholes)
+  // console.log("Boreholes: ", boreholes)
+  // populate markers arr
 
   boreholes.forEach(function (borehole) {
-    points.push(new ol_Feature__WEBPACK_IMPORTED_MODULE_2__["default"]({
-      geometry: new ol_geom_Point__WEBPACK_IMPORTED_MODULE_3__["default"]((0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.fromLonLat)([borehole["long"], borehole.lat])) // nbo
+    var _setProperties;
 
+    points.push(new ol_Feature__WEBPACK_IMPORTED_MODULE_2__["default"]({
+      geometry: new ol_geom_Point__WEBPACK_IMPORTED_MODULE_3__["default"]((0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.fromLonLat)([borehole.longitude, borehole.latitude])),
+      // nbo
+      setProperties: (_setProperties = {
+        'owner_name': borehole.owner_name,
+        'file_no': borehole.file_no,
+        'mapsheet': borehole.mapsheet
+      }, _defineProperty(_setProperties, "file_no", borehole.file_no), _defineProperty(_setProperties, 'DOI', borehole.DOI), _defineProperty(_setProperties, 'category', borehole.category), _defineProperty(_setProperties, 'the_type', borehole.the_type), _defineProperty(_setProperties, 'SRO', borehole.SRO), _defineProperty(_setProperties, 'coordinates', {
+        'long': borehole.longitude,
+        'lat': borehole.latitude
+      }), _setProperties)
     }));
+  });
+  boreholes.forEach(function (borehole) {
+    owners.push(borehole.owner_name);
   }); // apply style to points
 
   points.forEach(function (point) {
@@ -59,12 +78,13 @@ fetch('/getboreholes').then(function (res) {
     })
   });
   map.addLayer(layer);
-}); // map
+}); // console.log("Points: ", points);
+// map
 
 var map = new ol_Map__WEBPACK_IMPORTED_MODULE_6__["default"]({
   view: new ol_View__WEBPACK_IMPORTED_MODULE_7__["default"]({
-    center: (0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.fromLonLat)([36.8219, -1.2921]),
-    zoom: 12
+    center: (0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.fromLonLat)([37.1274, -0.4832]),
+    zoom: 10
   }),
   layers: [new ol_layer__WEBPACK_IMPORTED_MODULE_8__["default"]({
     source: new ol_source_OSM__WEBPACK_IMPORTED_MODULE_9__["default"]()
@@ -99,16 +119,67 @@ closer.onclick = function () {
   return false;
 };
 
-var popup_div = "<div class=\"popup_div\">\n<h4><a href=\"#\">Dam Title</a></h4>\n<b>Location: </b>Tetu<br/>\n<b>Agency: </b>G.o.K<br/>\n<b>Pumping: </b>Solar<br/>\n</div>";
-map.on('singleclick', function (event) {
-  if (map.hasFeatureAtPixel(event.pixel) === true) {
-    var coordinate = event.coordinate;
+var popup_div = "<div class=\"popup_div\">\n<b><a href=\"#\">Link</b></h4>\n<b>File No: </b>Tetu<br/>\n<b>Form Type: </b>Tetu<br/>\n<b>Mapsheet: </b>Tetu<br/>\n</div>"; // map.on('singleclick', function (event) {
+//    if (map.hasFeatureAtPixel(event.pixel) === true) {
+//        var coordinate = event.coordinate;
+//        content.innerHTML = popup_div;
+//        overlay.setPosition(coordinate);
+//    } else {
+//        overlay.setPosition(undefined);
+//       //  closer.blur();
+//    }
+// });
+
+map.on("singleclick", function (e) {
+  map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
+    //do something
+    console.log("The Feature: ", feature.values_.setProperties);
+    var coordinate = e.coordinate;
     content.innerHTML = popup_div;
     overlay.setPosition(coordinate);
-  } else {
-    overlay.setPosition(undefined); //  closer.blur();
-  }
+  });
 });
+console.log("All owners: ", owners); // SEARCH
+// fecth
+// the data
+
+var users = [];
+fetch('/get_owners_list').then(function (res) {
+  return res.json();
+}).then(function (data) {
+  users = data;
+  render_lists(users); // function takes in list array
+}); // where to render the data
+
+var ul = document.getElementById("users-list"); // function takes in list array
+
+function render_lists(lists) {
+  var li = ''; // iterates thru array and display
+
+  var index = 0;
+
+  for (index in lists) {
+    li += "<li>" + lists[index] + "</li>"; // concatenate
+  }
+
+  ul.innerHTML = li;
+} // lets filters it
+
+
+var input = document.getElementById('filter_users'); // filters users and returns arr of keywords matching
+
+function filterUsers() {
+  console.log("Filtering users");
+  var keyword = input.value.toLowerCase();
+  var filtered_users = users.filter(function (user) {
+    user = user.toLowerCase();
+    return user.indexOf(keyword) > -1;
+  });
+  render_lists(filtered_users);
+} // add an event listener to the input
+
+
+input.addEventListener('keyup', filterUsers);
 
 /***/ }),
 

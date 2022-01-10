@@ -84,4 +84,9 @@ class HolesController extends Controller
         $hole->delete();
         return view('home');
     }
+
+    function get_owners (Request $req) {
+        $owners = Hole::all()->pluck('owner_name')->toArray();
+        return $owners;
+    }
 }

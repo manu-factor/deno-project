@@ -15,15 +15,17 @@ class CreateHolesTable extends Migration
     {
         Schema::create('holes', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // name of the borehole
-            $table->string('location'); // i.e karatina, tetu
-            $table->string('lat'); // latitude
-            $table->string('long'); // longitude
-            $table->string('agency'); // i.e name of agency i.e Davies & Shirtliff, Ministry
-            $table->string('DOI');
-            $table->string('tapping'); // i.e manual, electric, solar
-            $table->boolean('status')->default(true); // true fo operational, false for non-operational
-            $table->timestamps();
+            $table->string('longitude'); // longitude
+            $table->string('latitude'); // latitude
+            $table->string('z_axis'); // depth
+            $table->string('file_no'); // file number
+            $table->string('DOI'); // date of installation
+            $table->string('owner_name'); // Name of Owner
+            $table->string('category'); // category
+            $table->string('the_type'); // type
+            $table->string('mapsheet'); // mapsheet
+            $table->string('SRO'); // i.e muranga
+            // $table->timestamps();
         });
     }
 

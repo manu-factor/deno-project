@@ -24,6 +24,7 @@ $router->post('/hole/update/{id}', 'HolesController@hole_update_content');
 $router->get('/delete', 'HolesController@delete_view');
 $router->get('/hole/delete/{id}', 'HolesController@delete');
 $router->get('/welcome', 'HolesController@welcome');
+$router->get('/get_owners_list', 'HolesController@get_owners');
 
 
 $router->get('/getboreholes', 'HolesController@getBoreHoles');
