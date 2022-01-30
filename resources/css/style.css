@@ -8,10 +8,12 @@
 #popup {
     background-color: white;
     padding: 8px;
-    width: 120px;
-    font-size: 14px;
+    width: 240px;
+    font-size: .77em;
     border-radius: 5px;
     box-shadow: 3px 3px 3px 3px #ccc;
+    overflow-x: scroll;
+    white-space:nowrap;
 }
 
 a#popup-closer {
@@ -25,9 +27,86 @@ a.navbar-brand {
     color: red;
 }
 
-ul#users-list {
+tbody#users-list {
     padding: 0;
     margin: 0;
-    font-weight: bold;
+    /* font-weight: bold; */
     font-size: 0.77em;
+    
+}
+
+tbody#users-list > th,tr {
+    padding: 0; margin: 0;
+    white-space:nowrap
+}
+
+section.filter-section {
+    /* padding: 24px 77px; */
+    max-height: 480px;
+    max-width: 900px;
+    display: block;
+    margin: 48px auto;
+    overflow-y: scroll;
+    margin-bottom: 120px;
+}
+
+section.all-section {
+    /* padding: 24px 77px; */
+    max-height: 480px;
+    max-width: 100%;
+    /* display: block; */
+    /* margin: 48px auto; */
+    overflow: scroll;
+    margin-bottom: 120px;
+    font-size: .75em;
+}
+
+
+#selectVal {
+    border: none;
+    box-shadow: 3px 3px 3px #eee;
+    background-color: #eee;
+    text-transform: uppercase;
+    font-size: .77em;
+    /* padding: 8px; */
+    color: #333;
+    margin: 0 7px;
+    /* border-radius: 5px; */
+}
+
+thead.thead-dark th {
+    position: sticky;
+    top: 0;
+    background-color: #000;
+    color: white;
+}
+
+#filter_users {
+    max-width: 540px;
+    padding: 8px;
+    font-size: 1.77em;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+
+a.tr-link {
+    text-decoration: none;
+}
+
+tr.singleRow:hover {
+    background-color: pink;
+    cursor: pointer;
+}
+
+b.the_title {
+
+}
+
+.insertForm,
+.updateForm {
+    background-color: #eee;
+    box-shadow: 3px 3px 3px #ccc;
+    /* border-radius: 5px; */
+    padding: 24px 12px;
 }

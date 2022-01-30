@@ -29,15 +29,15 @@ fetch('/getboreholes').then(res => res.json()).then(data => {
     points.push(new Feature({
       geometry: new Point(fromLonLat([borehole.longitude, borehole.latitude])), // nbo
       setProperties: {
+        'id': borehole.id,
         'owner_name': borehole.owner_name,
         'file_no': borehole.file_no,
         'mapsheet': borehole.mapsheet,
-        'file_no': borehole.file_no,
         'DOI': borehole.DOI,
         'category': borehole.category,
         'the_type': borehole.the_type,
         'SRO': borehole.SRO,
-        'coordinates': { 'long': borehole.longitude, 'lat': borehole.latitude },
+        'coordinates': { 'long': borehole.longitude, 'lat': borehole.latitude, 'z': borehole.z_axis },
       }
     }))
   });
@@ -115,38 +115,38 @@ closer.onclick = function() {
    return false;
 };
 
-let popup_div = `<div class="popup_div">
-<b><a href="#">Link</b></h4>
-<b>File No: </b>Tetu<br/>
-<b>Form Type: </b>Tetu<br/>
-<b>Mapsheet: </b>Tetu<br/>
-</div>`
+map.on('singleclick', function (event) {
+   if (map.hasFeatureAtPixel(event.pixel) === true) {
+       var coordinate = event.coordinate;
 
-// map.on('singleclick', function (event) {
-//    if (map.hasFeatureAtPixel(event.pixel) === true) {
-//        var coordinate = event.coordinate;
+       
+       overlay.setPosition(coordinate);
+   } else {
+       overlay.setPosition(undefined);
+      //  closer.blur();
+   }
 
-//        content.innerHTML = popup_div;
-//        overlay.setPosition(coordinate);
-//    } else {
-//        overlay.setPosition(undefined);
-//       //  closer.blur();
-//    }
-// });
+   map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
+     var data = feature.values_.setProperties
+    //  populate_popup(data)
+    // content.innerHTML = popup_div;
+    content.innerHTML = populate_popup(data)
+    // console.log("A feature has been clicked");
+   })
+});
 
-map.on("singleclick", function(e) {
-  map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
-      //do something
-      console.log("The Feature: ", feature.values_.setProperties)
-      var coordinate = e.coordinate;
-
-      content.innerHTML = popup_div;
-      overlay.setPosition(coordinate);
-  })})
-
-
-
-console.log("All owners: ", owners)
+function populate_popup (data) {
+  return `<div class="popup_div">
+  <a href="/hole/${data.id}" target="_blank">More</a><br>
+  <b>Owner Name: </b><small>${data.owner_name}</small><br/>
+  <b>Longitude: </b>${data.coordinates.long}<br/>
+  <b>Latitude: </b>${data.coordinates.lat}<br/>
+  <b>Z: </b>${data.coordinates.z}<br/>
+  <b>File No: </b>${data.file_no}<br/>
+  <b>Form Type: </b>${data.the_type}<br/>
+  <b>Mapsheet: </b>${data.mapsheet}<br/>
+  </div>`
+}
 
 
 
@@ -155,23 +155,50 @@ console.log("All owners: ", owners)
 // fecth
 // the data
 var users = [];
-fetch('/get_owners_list').then(res => res.json()).then(data => {
+fetch('/filter_records').then(res => res.json()).then(data => {
+
+  // users = data // this was array of strings
+
   users = data
-  render_lists(users); // function takes in list array
+
+
+  render_lists(data); // function takes in list array
 })
 
 // where to render the data
-var ul = document.getElementById("users-list");
+var tbody = document.getElementById("users-list");
 
 // function takes in list array
-function render_lists (lists){
-  var li = '';
-  // iterates thru array and display
-  var index = 0;
-  for(index in lists){
-      li += "<li>" + lists[index] + "</li>"; // concatenate
-  }
-  ul.innerHTML = li;
+function render_lists (/*lists */arr){
+
+  var tr = ``
+  arr.forEach((itm)=>{
+
+    tr += `<tr onclick="window.location='/hole/${itm.id}'" class="singleRow">
+              <th>${itm.owner_name}</th>
+              <td>${itm.file_no}</td>
+              <td>${itm.mapsheet}</td>
+              <td>${itm.category}</td>
+              <td>${itm.the_type}</td>
+              <td>${itm.SRO}</td>
+              <td>${itm.DOI}</td>
+              <td>${itm.z_axis}</td>
+            </tr>`
+
+
+    // console.log(itm.owner_name)
+    // li += "<li>" + itm.owner_name + "</li>"; // concatenate
+  })
+  tbody.innerHTML = tr;
+
+  // var li = '';
+  // // iterates thru array and display
+  // var index = 0;
+  // for(index in lists){
+  //     li += "<li>" + lists[index] + "</li>"; // concatenate
+  // }
+  // ul.innerHTML = li;
+
 }
 
 // lets filters it
@@ -179,15 +206,36 @@ var input = document.getElementById('filter_users');
 
 // filters users and returns arr of keywords matching
 function filterUsers (){
-  console.log("Filtering users")
+
+
+  console.log("Filtering users with: ", select.value )
   var keyword = input.value.toLowerCase();
-  var filtered_users = users.filter((user) => {
-          user = user.toLowerCase();
-          return user.indexOf(keyword) > -1; 
-  });
+
+  var filtered_users = users.filter ( (itm) => {
+    // user = user.toLowerCase();
+    itm = itm[select.value].toLowerCase();
+    // console.log("See: ", itm)
+    return itm.indexOf(keyword) > -1;
+  } )
+
+  // var filtered_users = users.filter((user) => {
+  //         user = user.toLowerCase();
+  //         return user.indexOf(keyword) > -1; 
+  // });
 
   render_lists(filtered_users);
 }
 
 // add an event listener to the input
 input.addEventListener('keyup', filterUsers);
+
+
+
+// select
+var select = document.getElementById("selectVal")
+
+console.log("The select dom: ", select)
+
+select.addEventListener('change', () => {
+  console.log("Selected: ", select.value)
+})

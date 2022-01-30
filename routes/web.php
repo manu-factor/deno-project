@@ -16,15 +16,10 @@
 $router->get('/', 'HolesController@home');
 $router->get('/read', 'HolesController@read');
 $router->get('/insert', 'HolesController@insertView');
-$router->get('/update', 'HolesController@update');
 $router->post('/insert', 'HolesController@insert');
 $router->get('/hole/{id}', 'HolesController@single_hole_view');
 $router->get('/hole/update/{id}', 'HolesController@hole_update_view');
 $router->post('/hole/update/{id}', 'HolesController@hole_update_content');
-$router->get('/delete', 'HolesController@delete_view');
 $router->get('/hole/delete/{id}', 'HolesController@delete');
-$router->get('/welcome', 'HolesController@welcome');
-$router->get('/get_owners_list', 'HolesController@get_owners');
-
-
-$router->get('/getboreholes', 'HolesController@getBoreHoles');
+$router->get('/filter_records', 'HolesController@filter_records'); // for filters
+$router->get('/getboreholes', 'HolesController@getBoreHoles'); // for map

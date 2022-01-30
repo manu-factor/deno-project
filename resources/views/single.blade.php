@@ -1,17 +1,24 @@
-<html>
-    <body>
-        <h1>Map Project</h1>
-        <h2>Single Borehole - {{ $hole->name }}</h2>
-        <b>Name: </b>{{ $hole->name }}<br>
-        <b>Location: </b>{{ $hole->location }}<br>
-        <b>Longitude: </b>{{ $hole->long }}<br>
-        <b>Latitude: </b>{{ $hole->lat }}<br>
-        <b>Agency: </b>{{ $hole->agency }}<br>
-        <b>Tapping: </b>{{ $hole->tapping }}<br>
-        <b>Date of Installment: </b>{{ $hole->DOI }}<br>
-        <b>Status: </b>{{ $hole->status }}<br>
-        <br>
-        <a href="/hole/update/{{ $hole->id }}">Edit</a>
-        <a href="/hole/delete/{{ $hole->id }}">Delete</a>
-    </body>
-</html>
+@extends('layouts/app')
+
+@section('content')
+
+<section class="container single-hole">
+
+    <h2>Single Borehole</h2>
+    <hr>
+    <b>Owner Name: </b>{{ $hole->owner_name }}<br>
+    <b>File No: </b>{{ $hole->file_no }}<br>
+    <b>Mapsheet: </b>{{ $hole->mapsheet }}<br>
+    <b>SRO: </b>{{ $hole->SRO }}<br>
+    <b>Category: </b>{{ $hole->category }}<br>
+    <b>Type: </b>{{ $hole->the_type }}<br>
+    <b>Date of Installation: </b>{{ $hole->DOI }}<br>
+    <b>Longitude: </b>{{ $hole->longitude }}<br>
+    <b>Latitude: </b>{{ $hole->latitude }}<br>
+    <b>Depth(z-axis): </b>{{ $hole->z_axis }}<br>
+    <br>
+    <a href="/hole/update/{{ $hole->id }}" class="btn btn-sm btn-dark">Edit</a>
+    <a href="/hole/delete/{{ $hole->id }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete Borehole?')">Delete</a>
+</section>
+    
+@endsection

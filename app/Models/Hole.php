@@ -10,7 +10,7 @@ class Hole extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'location', 'lat', 'long', 'agency', 'DOI', 'tapping', 'status'
+        'owner_name', 'longitude', 'latitude', 'z_axis', 'category', 'mapsheet', 'SRO', 'DOI', 'the_type', 'file_no'
     ];
 
     /**
@@ -18,5 +18,6 @@ class Hole extends Model {
      * @var array
      */
     protected $hidden = [];
+    public $timestamps = false;
 
 }

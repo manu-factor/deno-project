@@ -22,8 +22,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ol_style__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ol/style */ "./node_modules/ol/style/Icon.js");
 /* harmony import */ var ol_source_Vector__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js");
 /* harmony import */ var ol_proj__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -49,19 +47,24 @@ fetch('/getboreholes').then(function (res) {
   // populate markers arr
 
   boreholes.forEach(function (borehole) {
-    var _setProperties;
-
     points.push(new ol_Feature__WEBPACK_IMPORTED_MODULE_2__["default"]({
       geometry: new ol_geom_Point__WEBPACK_IMPORTED_MODULE_3__["default"]((0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.fromLonLat)([borehole.longitude, borehole.latitude])),
       // nbo
-      setProperties: (_setProperties = {
+      setProperties: {
+        'id': borehole.id,
         'owner_name': borehole.owner_name,
         'file_no': borehole.file_no,
-        'mapsheet': borehole.mapsheet
-      }, _defineProperty(_setProperties, "file_no", borehole.file_no), _defineProperty(_setProperties, 'DOI', borehole.DOI), _defineProperty(_setProperties, 'category', borehole.category), _defineProperty(_setProperties, 'the_type', borehole.the_type), _defineProperty(_setProperties, 'SRO', borehole.SRO), _defineProperty(_setProperties, 'coordinates', {
-        'long': borehole.longitude,
-        'lat': borehole.latitude
-      }), _setProperties)
+        'mapsheet': borehole.mapsheet,
+        'DOI': borehole.DOI,
+        'category': borehole.category,
+        'the_type': borehole.the_type,
+        'SRO': borehole.SRO,
+        'coordinates': {
+          'long': borehole.longitude,
+          'lat': borehole.latitude,
+          'z': borehole.z_axis
+        }
+      }
     }));
   });
   boreholes.forEach(function (borehole) {
@@ -119,67 +122,84 @@ closer.onclick = function () {
   return false;
 };
 
-var popup_div = "<div class=\"popup_div\">\n<b><a href=\"#\">Link</b></h4>\n<b>File No: </b>Tetu<br/>\n<b>Form Type: </b>Tetu<br/>\n<b>Mapsheet: </b>Tetu<br/>\n</div>"; // map.on('singleclick', function (event) {
-//    if (map.hasFeatureAtPixel(event.pixel) === true) {
-//        var coordinate = event.coordinate;
-//        content.innerHTML = popup_div;
-//        overlay.setPosition(coordinate);
-//    } else {
-//        overlay.setPosition(undefined);
-//       //  closer.blur();
-//    }
-// });
-
-map.on("singleclick", function (e) {
-  map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
-    //do something
-    console.log("The Feature: ", feature.values_.setProperties);
-    var coordinate = e.coordinate;
-    content.innerHTML = popup_div;
+map.on('singleclick', function (event) {
+  if (map.hasFeatureAtPixel(event.pixel) === true) {
+    var coordinate = event.coordinate;
     overlay.setPosition(coordinate);
+  } else {
+    overlay.setPosition(undefined); //  closer.blur();
+  }
+
+  map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
+    var data = feature.values_.setProperties; //  populate_popup(data)
+    // content.innerHTML = popup_div;
+
+    content.innerHTML = populate_popup(data); // console.log("A feature has been clicked");
   });
 });
-console.log("All owners: ", owners); // SEARCH
+
+function populate_popup(data) {
+  return "<div class=\"popup_div\">\n  <a href=\"/hole/".concat(data.id, "\" target=\"_blank\">More</a><br>\n  <b>Owner Name: </b><small>").concat(data.owner_name, "</small><br/>\n  <b>Longitude: </b>").concat(data.coordinates["long"], "<br/>\n  <b>Latitude: </b>").concat(data.coordinates.lat, "<br/>\n  <b>Z: </b>").concat(data.coordinates.z, "<br/>\n  <b>File No: </b>").concat(data.file_no, "<br/>\n  <b>Form Type: </b>").concat(data.the_type, "<br/>\n  <b>Mapsheet: </b>").concat(data.mapsheet, "<br/>\n  </div>");
+} // SEARCH
 // fecth
 // the data
 
+
 var users = [];
-fetch('/get_owners_list').then(function (res) {
+fetch('/filter_records').then(function (res) {
   return res.json();
 }).then(function (data) {
+  // users = data // this was array of strings
   users = data;
-  render_lists(users); // function takes in list array
+  render_lists(data); // function takes in list array
 }); // where to render the data
 
-var ul = document.getElementById("users-list"); // function takes in list array
+var tbody = document.getElementById("users-list"); // function takes in list array
 
-function render_lists(lists) {
-  var li = ''; // iterates thru array and display
-
-  var index = 0;
-
-  for (index in lists) {
-    li += "<li>" + lists[index] + "</li>"; // concatenate
-  }
-
-  ul.innerHTML = li;
+function render_lists(
+/*lists */
+arr) {
+  var tr = "";
+  arr.forEach(function (itm) {
+    tr += "<tr onclick=\"window.location='/hole/".concat(itm.id, "'\" class=\"singleRow\">\n              <th>").concat(itm.owner_name, "</th>\n              <td>").concat(itm.file_no, "</td>\n              <td>").concat(itm.mapsheet, "</td>\n              <td>").concat(itm.category, "</td>\n              <td>").concat(itm.the_type, "</td>\n              <td>").concat(itm.SRO, "</td>\n              <td>").concat(itm.DOI, "</td>\n              <td>").concat(itm.z_axis, "</td>\n            </tr>"); // console.log(itm.owner_name)
+    // li += "<li>" + itm.owner_name + "</li>"; // concatenate
+  });
+  tbody.innerHTML = tr; // var li = '';
+  // // iterates thru array and display
+  // var index = 0;
+  // for(index in lists){
+  //     li += "<li>" + lists[index] + "</li>"; // concatenate
+  // }
+  // ul.innerHTML = li;
 } // lets filters it
 
 
 var input = document.getElementById('filter_users'); // filters users and returns arr of keywords matching
 
 function filterUsers() {
-  console.log("Filtering users");
+  console.log("Filtering users with: ", select.value);
   var keyword = input.value.toLowerCase();
-  var filtered_users = users.filter(function (user) {
-    user = user.toLowerCase();
-    return user.indexOf(keyword) > -1;
-  });
+  var filtered_users = users.filter(function (itm) {
+    // user = user.toLowerCase();
+    itm = itm[select.value].toLowerCase(); // console.log("See: ", itm)
+
+    return itm.indexOf(keyword) > -1;
+  }); // var filtered_users = users.filter((user) => {
+  //         user = user.toLowerCase();
+  //         return user.indexOf(keyword) > -1; 
+  // });
+
   render_lists(filtered_users);
 } // add an event listener to the input
 
 
-input.addEventListener('keyup', filterUsers);
+input.addEventListener('keyup', filterUsers); // select
+
+var select = document.getElementById("selectVal");
+console.log("The select dom: ", select);
+select.addEventListener('change', function () {
+  console.log("Selected: ", select.value);
+});
 
 /***/ }),
 

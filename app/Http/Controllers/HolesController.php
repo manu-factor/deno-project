@@ -17,24 +17,6 @@ class HolesController extends Controller
     function home () {
         return view('home');
     }
-	
-	function getBoreHoles () {
-		return Hole::all();
-	}
-
-    function insert (Request $request) {
-        Hole::create([
-            'name' => $request->name,
-            'location' => $request->location,
-            'long' => $request->long,
-            'lat' => $request->lat,
-            'agency' => $request->agency,
-            'DOI' => $request->doi,
-            'tapping' => $request->tapping,
-            'status' => true,
-        ]);
-        return view('home');
-    }
 
     function insertView () {
         return view('insert');
@@ -45,9 +27,20 @@ class HolesController extends Controller
         return view('read')->with('data', $data);
     }
 
-    function update () {
-        $data = Hole::all();
-        return view('update')->with('data', $data);
+    function insert (Request $request) {
+        Hole::create([
+            'owner_name' => $request->owner_name,
+            'file_no' => $request->file_no,
+            'longitude' => $request->longitude,
+            'latitude' => $request->latitude,
+            'z_axis' => $request->z_axis,
+            'DOI' => $request->DOI,
+            'mapsheet' => $request->mapsheet,
+            'SRO' => $request->SRO,
+            'category' => $request->category,
+            'the_type' => $request->the_type,
+        ]);
+        return view('home');
     }
 
     function single_hole_view ($id) {
@@ -57,26 +50,23 @@ class HolesController extends Controller
 
     function hole_update_view ($id) {
         $hole = Hole::find($id);
-        return view('insert-update')->with('hole', $hole);
+        return view('update')->with('hole', $hole);
     }
 
     function hole_update_content ( Request $request, $id ) {
         $hole = Hole::find($id);
-        $hole->name = $request->name;
-        $hole->location = $request->location;
-        $hole->long = $request->long;
-        $hole->lat = $request->lat;
-        $hole->agency = $request->agency;
-        $hole->DOI = $request->doi;
-        $hole->tapping = $request->tapping;
-        $hole->status = true;
+        $hole->owner_name = $request->owner_name;
+        $hole->file_no = $request->file_no;
+        $hole->mapsheet = $request->mapsheet;
+        $hole->longitude = $request->longitude;
+        $hole->latitude = $request->latitude;
+        $hole->z_axis = $request->z_axis;
+        $hole->the_type = $request->the_type;
+        $hole->category = $request->category;
+        $hole->DOI = $request->DOI;
+        $hole->SRO = $request->SRO;
         $hole->save();
         return view('home');
-    }
-
-    function delete_view () {
-        $data = Hole::all();
-        return view('delete')->with('data', $data);
     }
 
     function delete ($id) {
@@ -85,8 +75,11 @@ class HolesController extends Controller
         return view('home');
     }
 
-    function get_owners (Request $req) {
-        $owners = Hole::all()->pluck('owner_name')->toArray();
-        return $owners;
+    function getBoreHoles () {
+		return Hole::all();
+	}
+
+    function filter_records (Request $req) {
+        return response()->json(Hole::all()->toArray());
     }
 }
