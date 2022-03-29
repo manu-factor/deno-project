@@ -23,7 +23,7 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-// $app->withFacades();
+$app->withFacades();
 
 $app->withEloquent();
 
@@ -76,9 +76,11 @@ $app->configure('app');
 //     App\Http\Middleware\Cors::class
 // ]);
 
-// $app->routeMiddleware([
-//     'cors' => App\Http\Middleware\Cors::class,
-// ]);
+$app->routeMiddleware([
+    // 'cors' => App\Http\Middleware\Cors::class,
+    'auth' => App\Http\Middleware\Authenticate::class,
+    'guest' => App\Http\Middleware\Guest::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -92,7 +94,7 @@ $app->configure('app');
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
 /*

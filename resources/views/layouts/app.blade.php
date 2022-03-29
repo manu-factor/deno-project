@@ -24,15 +24,33 @@
         <div class="navbar-nav">
           <a class="nav-link" href="/">Homepage</a>
           <a class="nav-link" href="/read">See All</a>
-          <a class="nav-link" href="/insert">Add New</a>
+          
+
+            @guest
+              <b><a class="nav-link text-primary" href="/login">Login</a></b>
+              <b><a class="nav-link text-success" href="/register">Register</a></b>
+            @else
+              <a class="nav-link" href="/insert">Add New</a>
+              <b><a class="nav-link text-danger" href="/logout">Logout</a></b>
+            @endguest
+          
+          
         </div>
       </div>
     </nav>
 
+    @guest
+    @else
+      <div class="container">
+        <b class="text-success">Logged in</b> as <b>{{ auth()->user()->username }}</b>
+      </div>
+    @endguest
+
 
     <main class="py-4">
-        @yield('content')
+      @yield('content')        
     </main>
+    
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     <script src='{{ url("main.js") }}'></script>

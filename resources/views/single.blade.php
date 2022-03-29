@@ -17,8 +17,11 @@
     <b>Latitude: </b>{{ $hole->latitude }}<br>
     <b>Depth(z-axis): </b>{{ $hole->z_axis }}<br>
     <br>
+    @guest
+    @else
     <a href="/hole/update/{{ $hole->id }}" class="btn btn-sm btn-dark">Edit</a>
     <a href="/hole/delete/{{ $hole->id }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete Borehole?')">Delete</a>
+    @endguest
 </section>
     
 @endsection

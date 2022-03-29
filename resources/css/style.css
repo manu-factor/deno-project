@@ -110,3 +110,12 @@ b.the_title {
     /* border-radius: 5px; */
     padding: 24px 12px;
 }
+.alert {
+    padding: 5px 10px !important;
+    float: right;
+    max-width: 380px;
+}
+
+a.nav-link {
+    margin: 0 13px 0 0;
+}
